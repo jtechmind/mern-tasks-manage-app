@@ -1,0 +1,40 @@
+@media (max-width: 1080px) {
+  .main-nav {
+    height: 8rem;
+    grid-template-columns: 2rem 3fr 3fr 1fr 2rem;
+  }
+  .logo,
+  .menu-links,
+  .social-media ul {
+    height: 8rem;
+  }
+}
+
+@media (max-width: 998px) {
+  .main-nav {
+    height: 7rem;
+    grid-template-columns: 2rem 2fr 3fr 2fr 2rem;
+  }
+
+  .menu-links {
+    display: none;
+  }
+  .social-media .social-media-desktop {
+    height: 0;
+    display: none;
+  }
+  .logo,
+  .social-media ul {
+    height: 7rem;
+  }
+  .social-media {
+    height: 7rem;
+    display: flex;
+    justify-self: end;
+    align-items: center;
+  }
+  .social-media .hamburger-menu {
+    display: block;
+    font-size: 2.5rem;
+  }
+}

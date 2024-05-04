@@ -1,0 +1,21 @@
+body {
+  background-color: #3aafa9; /*#feffff;*/ /* #ac8968; */ /* #865d36;*/
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Jost", sans-serif;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+a {
+  text-decoration: none;
+}
+ul {
+  text-decoration: none;
+}
