@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const router = require("./routes/tasks");
+const authRouter = require("./routes/auth.route");
 const connectDB = require("./db/db");
 require("dotenv").config();
 
@@ -13,6 +14,7 @@ connectDB();
 const PORT = process.env.PORT || 5000;
 
 app.use(router);
+app.use("/api/auth", authRouter);
 
 app.listen(PORT, () => {
   console.log(`Servet is running on the ${PORT}`);
