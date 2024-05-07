@@ -1,6 +1,8 @@
 const User = require("../models/userModel");
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
+dotenv.config();
 
 const signUp = async (req, res) => {
   try {
@@ -37,20 +39,60 @@ const signIn = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    const isUserExists = await User.findOne({ email });
+
+    // encrypt password
     const salt = bcryptjs.genSaltSync(10);
     const hashedPassword = bcryptjs.hashSync(password, salt);
 
-    const userSignIn = await User.findOne({ email });
+    // compare password
+    const validPassword = await bcryptjs.compare(
+      password,
+      isUserExists.password
+    );
 
-    const validPassword = await bcryptjs.compare(password, userSignIn.password);
-
-    if (!validPassword) {
-      res.status(400).json({ message: "Invalid Credentials!" });
+    if (!isUserExists || !validPassword) {
+      res.status(4001).json({ message: "Invalid Credentials!" });
     }
-    res.status(200).json({ message: "Logged in successfully" });
+
+    // create Token
+    // Payload data for JWT
+    const tokenData = {
+      id: isUserExists._id,
+      email: isUserExists.email,
+    };
+    const token = await jwt.sign(tokenData, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+    res.json({ token });
+
+    // res.status(200).json({ message: "Logged in successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+};
+
+const authenticateToken = async (req, res, next) => {
+  try {
+    const authHeader = req.headers.Authorization || req.headers.authorization;
+
+    if (authHeader && authHeader.startsWith("Bearer")) {
+      token = authHeader.split(" ")[1];
+      console.log(token);
+      jwt.verify(token, process.env.JWT_SECRET, (err, activeUser) => {
+        if (err) {
+          res.status(401).json("Invalid Token");
+        }
+        // req.user = user;
+        // next();
+        console.log(activeUser);
+      });
+    }
+
+    // if (!token) {
+    //   res.status(401).json("Unauthorized11");
+    // }
+  } catch (error) {}
 };
 
 const signOut = async (req, res) => {
@@ -58,4 +100,8 @@ const signOut = async (req, res) => {
   } catch (error) {}
 };
 
-module.exports = { signUp, signIn, signOut };
+const currentUser = async (req, res) => {
+  res.json({ message: res.user });
+};
+
+module.exports = { signUp, signIn, signOut, authenticateToken, currentUser };
